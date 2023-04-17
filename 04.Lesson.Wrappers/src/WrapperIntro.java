@@ -23,6 +23,7 @@ public class WrapperIntro {
 		System.out.println(z);
 		System.out.println(q);
 		
+		@SuppressWarnings("removal")
 		Integer a = new Integer(100);	// duplicated
 		System.out.println(a);
 		
@@ -68,6 +69,7 @@ public class WrapperIntro {
 		printNumber(i);
 		printNumberWrapper(res);
 		
+		@SuppressWarnings("unused")
 		int[] array = {1, 2, 3, 4, 5};
 		// printArray(array);	// WRONG - Integer can't use int
 	
