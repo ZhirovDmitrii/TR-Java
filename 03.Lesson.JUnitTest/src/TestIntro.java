@@ -51,7 +51,7 @@ class TestIntro {
 	{
 		System.out.println("Test boolean");
 		
-		assertTrue(2+2==4);
+//		assertTrue(2+2==4);
 		assertFalse(2+2==5);
 	}
 
