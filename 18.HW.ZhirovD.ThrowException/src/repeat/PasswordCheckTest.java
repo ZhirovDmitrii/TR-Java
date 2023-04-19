@@ -2,12 +2,10 @@ package repeat;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class PasswordCheckTest
 {
-
 	@Test
 	void rightPassword() throws IllegalPasswordException
 	{
@@ -22,6 +20,7 @@ class PasswordCheckTest
 		try
 		{
 			PasswordCheck.check("12%Abc");
+			fail("no exception");
 		} catch (IllegalPasswordException e)
 		{
 			assertArrayEquals(expected, e.getMessages());
@@ -35,6 +34,7 @@ class PasswordCheckTest
 		try
 		{
 			PasswordCheck.check("12Abc345");
+			fail("no exception");
 		} catch (IllegalPasswordException e)
 		{
 			assertArrayEquals(expected, e.getMessages());
