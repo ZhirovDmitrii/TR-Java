@@ -7,6 +7,7 @@ class MemoryServiceTest {
 	@Test
 	void test() {
 		long m = System.currentTimeMillis();
+		
 		Runtime runtime = Runtime.getRuntime();
 		System.out.printf("max free memory %d, max available memory %d, total memory %d", runtime.freeMemory(),
 				runtime.maxMemory(), runtime.totalMemory());
@@ -23,6 +24,7 @@ class MemoryServiceTest {
 			flag = true;
 		}
 		assertTrue(flag);
+		
 		System.out.println((double) (System.currentTimeMillis() - m));
 	}
 }
