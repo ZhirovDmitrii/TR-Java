@@ -67,11 +67,9 @@ public class MyHashSet<E> implements Set<E> {
 				return totalCount < size;
 			}
 
-// null
-// {1,2}
-// {}
-// {3,4,5}
-// {6}
+			/*
+			 * null {1,2} {} {3,4,5} {6}
+			 */
 			@Override
 			public E next() {
 				// null
@@ -101,13 +99,23 @@ public class MyHashSet<E> implements Set<E> {
 
 	@Override
 	public Object[] toArray() {
-		// TODO Auto-generated method stub
+		Object[] res = new Object[size];
+		int index = 0;
+
+		for (int i = 0; i < table.length; i++) {
+			if (table[i] == null || table[i].isEmpty())
+				continue;
+			for (Object o : table[i]) {
+				res[index] = o;
+				index++;
+			}
+		}
 		return null;
 	}
 
 	@Override
 	public <T> T[] toArray(T[] a) {
-		// TODO Auto-generated method stub
+		// DON'T TOUCH
 		return null;
 	}
 
@@ -167,32 +175,57 @@ public class MyHashSet<E> implements Set<E> {
 
 	@Override
 	public boolean containsAll(Collection<?> c) {
-		// TODO Auto-generated method stub
-		return false;
+		for (Object obj : c)
+		{
+			if (!contains(obj))
+				return false;
+		}
+		return true;
 	}
 
 	@Override
 	public boolean addAll(Collection<? extends E> c) {
-		// TODO Auto-generated method stub
-		return false;
+		int oldSize = size;
+		for (E e : c)
+		{
+			add(e);
+		}
+		return oldSize < size;
 	}
 
 	@Override
 	public boolean retainAll(Collection<?> c) {
-		// TODO Auto-generated method stub
-		return false;
+		int oldSize = size;
+		MyHashSet<E> temp = new MyHashSet<>();
+		for(E e: this)
+		{
+			if(c.contains(e))
+				temp.add(e);
+		}
+		clear();
+		addAll(temp);
+		return oldSize != size;
 	}
 
 	@Override
 	public boolean removeAll(Collection<?> c) {
-		// TODO Auto-generated method stub
-		return false;
+		int oldSize = size;
+		MyHashSet<E> temp = new MyHashSet<>();
+		for(E e: this)
+		{
+			if(!c.contains(e))
+				temp.add(e);
+		}
+		clear();
+		addAll(temp);
+		return oldSize != size;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void clear() {
-		// TODO Auto-generated method stub
-
+		table = new LinkedList[capacity];
+		size = 0;
 	}
 
 }
