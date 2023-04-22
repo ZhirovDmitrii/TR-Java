@@ -102,15 +102,15 @@ public class MyHashSet<E> implements Set<E> {
 		Object[] res = new Object[size];
 		int index = 0;
 
-		for (int i = 0; i < table.length; i++) {
+		for (int i = 0; i < table.length; i++){
 			if (table[i] == null || table[i].isEmpty())
 				continue;
-			for (Object o : table[i]) {
+			for (Object o: table[i]){
 				res[index] = o;
 				index++;
 			}
 		}
-		return null;
+		return res;
 	}
 
 	@Override
