@@ -66,6 +66,7 @@ public class MyHashSet<E> implements Set<E> {
 			public boolean hasNext() {
 				return totalCount < size;
 			}
+
 // null
 // {1,2}
 // {}
@@ -79,7 +80,7 @@ public class MyHashSet<E> implements Set<E> {
 					arrayIndex++; // 0 -> 1 ({1,2})
 					// end with null -> next list {1,2}
 				}
-				
+
 				// {1,2}
 				// table[arrayList] = {1, 2}
 				// get(listIndex) = 1 (listIndex now is 0) -> 2 (listIndex now is 1)
@@ -87,13 +88,13 @@ public class MyHashSet<E> implements Set<E> {
 				totalCount++; // 0 -> 1 -> 2
 
 				// 0 < 1 TRUE -> 1 < 1 FALSE
-				if (listIndex < table[arrayIndex].size() - 1)	//  size = 2, 2 - 1 = 1
-					listIndex++;	// 0 -> 1 -> to else
+				if (listIndex < table[arrayIndex].size() - 1) // size = 2, 2 - 1 = 1
+					listIndex++; // 0 -> 1 -> to else
 				else {
 					listIndex = 0;
-					arrayIndex++;	// 1 -> 2
+					arrayIndex++; // 1 -> 2
 				}
-				return res;	// 2
+				return res; // 2
 			}
 		};
 	}
@@ -134,6 +135,7 @@ public class MyHashSet<E> implements Set<E> {
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void recreation() {
+		capacity += 16;
 		LinkedList[] temp = new LinkedList[capacity + 16];
 
 		for (int i = 0; i < table.length; i++) {
