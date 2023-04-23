@@ -1,6 +1,9 @@
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.function.Predicate;
 
@@ -129,9 +132,47 @@ public class MapIntro {
 		// generate random numbers and count how many times it was generated
 		Map<Integer, Integer> randomNumbers = getRandomNumbers(0, 10 , 100);
 		System.out.println(randomNumbers);
+		
+		System.out.println("********************\n");
+//		===========================
+		
+//		===== INTERVIEW TASK =====
+		System.out.println("Interview task");
+		// count subString in str, print in sort by count
+		String str = "abc, lmn ab a lmn: a a ab-lmn";
+		// a -3
+		// lmn -> 3
+		// ab -> 2
+		// abc - 1
+		displayWordCount(str);
+		
 	}
 
-//	=============== METHODS ===============
+private static void displayWordCount(String str) {
+		String[] words = str.split("[^A-Za-z]+");
+		
+		HashMap<String, Integer> res = new HashMap<>();
+		for(String w: words) {
+			res.put(w, res.getOrDefault(w, 0)+1);	// count
+		}
+		
+		// entry sort
+		ArrayList<Map.Entry<String, Integer>> list = new ArrayList<>(res.entrySet());
+		list.sort(new Comparator<Map.Entry<String, Integer>>() {
+
+			@Override
+			public int compare(Entry<String, Integer> o1, Entry<String, Integer> o2) {
+				int res = o2.getValue() - o1.getValue();
+				return res != 0 ? res : o1.getKey().compareTo(o2.getKey());
+			}
+		});
+		
+		// print
+		for(Entry<String, Integer> e: list)
+			System.out.printf("%s -> %d\n", e.getKey(), e.getValue());
+	}
+
+	//	=============== METHODS ===============
 	private static Map<Integer, Integer> getRandomNumbers(int min, int max, int count) {
 		TreeMap<Integer, Integer> temp = new TreeMap<>();
 		for(int i = 0; i < count; i++) {
