@@ -1,5 +1,7 @@
 package telran.employees.dto;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
 
 public class Programmer {
@@ -7,37 +9,41 @@ public class Programmer {
 	String name;
 	Set<String> technologies;
 	int salary;
-	
-	public Programmer(int id, String name, Set<String> technologies, int salary) {
-		super();
+
+	public Programmer(int id, String name, String[] technologies, int salary) {
 		this.id = id;
 		this.name = name;
-		this.technologies = technologies;
+		this.technologies = new HashSet<>();
+		this.technologies.addAll(Arrays.asList(technologies));
 		this.salary = salary;
 	}
-	
+
 	public int getSalary() {
 		return salary;
 	}
+
 	public void setSalary(int salary) {
 		this.salary = salary;
 	}
+
 	public int getId() {
 		return id;
 	}
+
 	public String getName() {
 		return name;
 	}
+
 	public Set<String> getTechnologies() {
 		return technologies;
 	}
-	
+
 	@Override
 	public String toString() {
 		return "Programmer [id=" + id + ", name=" + name + ", technologies=" + technologies + ", salary=" + salary
 				+ "]";
 	}
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -45,6 +51,7 @@ public class Programmer {
 		result = prime * result + id;
 		return result;
 	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -58,6 +65,5 @@ public class Programmer {
 			return false;
 		return true;
 	}
-	
-	
+
 }
