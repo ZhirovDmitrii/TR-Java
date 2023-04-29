@@ -14,7 +14,8 @@ public class Programmer {
 		this.id = id;
 		this.name = name;
 		this.technologies = new HashSet<>();
-		this.technologies.addAll(Arrays.asList(technologies));
+		if (technologies != null)
+			this.technologies.addAll(Arrays.asList(technologies));
 		this.salary = salary;
 	}
 
