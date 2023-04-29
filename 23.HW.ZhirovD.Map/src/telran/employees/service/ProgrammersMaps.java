@@ -40,7 +40,7 @@ public class ProgrammersMaps implements IProgrammer {
 			throw new IllegalArgumentException("Argument cannot be null or blank");
 
 //		if(programmers.get(id) != null) {
-//			programmers.get(id).getTechnologies().contains(technology);
+//			programmers.get(id).getTechnologies().add(technology);
 //			return true;
 //		}
 //		else
