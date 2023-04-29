@@ -52,7 +52,9 @@ class ListTest {
 	
 	@Test
 	void testNotSupported() {
-		List<Integer> temp = Arrays.asList(1,2,3);	// immutable
+//		List<Integer> temp = Arrays.asList(1,2,3);	// immutable
+		List<Integer> temp = new ArrayList<>();
+		temp = Arrays.asList(1,2,3);
 		assertEquals(3, temp.size());
 		assertTrue(temp.contains(1));
 		assertEquals(temp.get(0), 1);
