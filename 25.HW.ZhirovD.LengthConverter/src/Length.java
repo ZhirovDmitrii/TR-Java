@@ -43,13 +43,13 @@ public class Length {
 	    return Double.compare(tNum, oNum) == 0;	// if == 0 - is TRUE
 	}
 	
-//	public Length plus(Length length) {
-//		// HW
-//	}
+public Length plus(Length length) {
+return new Length(number + length.convert(unit).number, unit);
+}
 	
-//	public Length minus(Length length) {
-//		// HW
-//	}
+public Length minus(Length length) {
+return new Length(number - length.convert(unit).number, unit);
+}
 
 	public Length convert(LengthUnit otherUnit) {
 		double num = getNumber() * getUnit().getValue() / otherUnit.getValue();
