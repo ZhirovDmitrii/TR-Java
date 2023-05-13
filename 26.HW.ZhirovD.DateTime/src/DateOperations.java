@@ -1,17 +1,13 @@
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.Period;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
-import java.time.format.DateTimeParseException;
 import java.util.Arrays;
-import java.util.Date;
+import java.util.Comparator;
 import java.util.Set;
-import java.util.Stack;
-import java.util.TimeZone;
 
 public class DateOperations {
 
@@ -21,9 +17,21 @@ public class DateOperations {
 	 *         dates
 	 */
 	public static String[] sortStringDates(String[] dates) {
-		
-		
-		return null;
+		Arrays.sort(dates, new Comparator<String>() {
+
+			@Override
+			public int compare(String o1, String o2) {
+				DateTimeFormatter dtf01 = getFormat(o1);
+				DateTimeFormatter dtf02 = getFormat(o2);
+				return LocalDate.parse(o1, dtf01).compareTo(LocalDate.parse(o2, dtf02));
+			}
+		});
+
+		return dates;
+	}
+
+	protected static DateTimeFormatter getFormat(String str) {
+		return str.contains("-") ? DateTimeFormatter.ISO_DATE : DateTimeFormatter.ofPattern("dd/MM/yyyy");
 	}
 
 	/**
@@ -51,8 +59,7 @@ public class DateOperations {
 //		}
 
 		// Option 2
-		DateTimeFormatter dtf = new DateTimeFormatterBuilder()
-				.appendOptional(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+		DateTimeFormatter dtf = new DateTimeFormatterBuilder().appendOptional(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
 				.appendOptional(DateTimeFormatter.ofPattern("yyyy-MM-dd")).toFormatter();
 		ldCD = currentDate == null ? LocalDate.now() : LocalDate.parse(currentDate, dtf);
 		ldBD = LocalDate.parse(birthDate, dtf);
@@ -66,19 +73,6 @@ public class DateOperations {
 	 *                      format
 	 */
 	public static void printCurrentTime(String string) {
-		// Option 1 (from google)
-//		String[] zones = TimeZone.getAvailableIDs();
-//		for(String zone: zones) {
-//			if(zone.contains(string)) {
-//				TimeZone tz = TimeZone.getTimeZone(zone);
-//				SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-//				sdf.setTimeZone(tz);
-//				Date d = new Date();
-//				System.out.println(zone + " - " + sdf.format(d));
-//			}
-//		}
-
-		// Option 2
 		Set<String> zones = ZoneId.getAvailableZoneIds();
 		for (String zone : zones) {
 			if (zone.contains(string)) {
