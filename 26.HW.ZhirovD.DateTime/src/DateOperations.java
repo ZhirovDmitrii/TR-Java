@@ -3,6 +3,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.Period;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.util.Arrays;
@@ -77,14 +78,25 @@ public class DateOperations {
 	 *                      format
 	 */
 	public static void printCurrentTime(String string) {
+		// My option
+//		Set<String> zones = ZoneId.getAvailableZoneIds();
+//		for (String zone : zones) {
+//			if (zone.contains(string)) {
+//				ZoneId zi = ZoneId.of(zone);
+//				LocalTime t = LocalTime.now(zi);
+//				DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm");
+//				String res = dtf.format(t);
+//				System.out.println(zone + " - " + res);
+//			}
+//		}
+		
+		// Teacher option
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm");
 		Set<String> zones = ZoneId.getAvailableZoneIds();
-		for (String zone : zones) {
-			if (zone.contains(string)) {
-				ZoneId zi = ZoneId.of(zone);
-				LocalTime t = LocalTime.now(zi);
-				DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm");
-				String res = dtf.format(t);
-				System.out.println(zone + " - " + res);
+		for(String zone : zones) {
+			if(zone.contains(string)) {
+				ZonedDateTime zdt = ZonedDateTime.now(ZoneId.of(zone));
+				System.out.println(zone + " - " + zdt.format(dtf));
 			}
 		}
 	}
