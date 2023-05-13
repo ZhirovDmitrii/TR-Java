@@ -22,8 +22,12 @@ public class DateOperations {
 			@Override
 			public int compare(String o1, String o2) {
 				DateTimeFormatter dtf01 = getFormat(o1);
+				LocalDate ld01 = LocalDate.parse(o1, dtf01);
+				
 				DateTimeFormatter dtf02 = getFormat(o2);
-				return LocalDate.parse(o1, dtf01).compareTo(LocalDate.parse(o2, dtf02));
+				LocalDate ld02 = LocalDate.parse(o2, dtf02);
+				
+				return ld01.compareTo(ld02);
 			}
 		});
 
