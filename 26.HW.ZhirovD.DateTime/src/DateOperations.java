@@ -10,6 +10,7 @@ import java.time.format.DateTimeParseException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Set;
+import java.util.Stack;
 import java.util.TimeZone;
 
 public class DateOperations {
@@ -20,27 +21,9 @@ public class DateOperations {
 	 *         dates
 	 */
 	public static String[] sortStringDates(String[] dates) {
-		DateTimeFormatter dtf01 = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-		DateTimeFormatter dtf02 = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-		LocalDate[] ld = new LocalDate[dates.length];
-
-		for (int i = 0; i < dates.length; i++) {
-			try {
-				ld[i] = LocalDate.parse(dates[i], dtf01);
-			} catch (DateTimeParseException e) {
-				ld[i] = LocalDate.parse(dates[i], dtf02);
-			}
-		}
-		Arrays.sort(ld);
-
-		String[] res = new String[dates.length];
-		for (int i = 0; i < ld.length; i++)
-			if (dates[i].contains("-")) {
-	            res[i] = ld[i].format(dtf01);
-	        } else {
-	            res[i] = ld[i].format(dtf02);
-	        }
-		return res;
+		
+		
+		return null;
 	}
 
 	/**
@@ -68,8 +51,8 @@ public class DateOperations {
 //		}
 
 		// Option 2
-		DateTimeFormatter dtf = new DateTimeFormatterBuilder().
-				appendOptional(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+		DateTimeFormatter dtf = new DateTimeFormatterBuilder()
+				.appendOptional(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
 				.appendOptional(DateTimeFormatter.ofPattern("yyyy-MM-dd")).toFormatter();
 		ldCD = currentDate == null ? LocalDate.now() : LocalDate.parse(currentDate, dtf);
 		ldBD = LocalDate.parse(birthDate, dtf);
@@ -94,11 +77,11 @@ public class DateOperations {
 //				System.out.println(zone + " - " + sdf.format(d));
 //			}
 //		}
-		
+
 		// Option 2
 		Set<String> zones = ZoneId.getAvailableZoneIds();
-		for(String zone: zones) {
-			if(zone.contains(string)) {
+		for (String zone : zones) {
+			if (zone.contains(string)) {
 				ZoneId zi = ZoneId.of(zone);
 				LocalTime t = LocalTime.now(zi);
 				DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm");
