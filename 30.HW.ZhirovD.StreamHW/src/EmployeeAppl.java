@@ -29,7 +29,7 @@ public class EmployeeAppl {
 	}
 
 	public static void displayAverageSalary(List<Employee> employees, String company) {
-		System.out.println(employees.stream().filter(s -> s.company.equals(company)).mapToInt(n -> n.salary).average());
+		System.out.println(employees.stream().filter(s -> s.company.equals(company)).mapToInt(n -> n.salary).average().orElse(0));
 	}
 
 	public static void displayEmployeesAvgSalary(List<Employee> employees) {
