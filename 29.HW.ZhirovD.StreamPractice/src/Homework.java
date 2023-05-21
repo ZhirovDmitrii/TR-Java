@@ -79,7 +79,9 @@ public class Homework {
 	static void sportLoto(int min, int max, int numberDigits) {
 		IntStream.rangeClosed(min, max).boxed()
 		.sorted(Comparator.comparing(e -> Math.random()))
-		.limit(numberDigits).forEach(num -> System.out.print(num + " "));
+		.distinct()
+		.limit(numberDigits)
+		.forEach(num -> System.out.print(num + " "));
 	}
 	
 }
