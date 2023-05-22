@@ -72,7 +72,7 @@ public class StreamAPI {
 				sink.accept(c);
 			}
 		}).forEach(n -> System.out.print(n));
-		System.out.println();
+		System.out.println("\n");
 
 //		 ===== TERMINAL METODS =====
 		// reduce
