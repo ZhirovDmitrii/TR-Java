@@ -54,7 +54,8 @@ public class StreamAPI {
 		System.out.println("\n");
 //	    ==========================
 
-		List<List<String>> list = new ArrayList<>(Arrays.asList(new ArrayList<>(Arrays.asList("a", "b", "c")),
+		List<List<String>> list = new ArrayList<>(Arrays.asList(
+				new ArrayList<>(Arrays.asList("a", "b", "c")),
 				new ArrayList<>(Arrays.asList("d", "e", "e", "a"))));
 
 		String[] ar = list.stream().flatMap(l -> l.stream()).distinct().toArray(String[]::new); // (.toArray(() -> new
