@@ -37,7 +37,7 @@ public class HomeworkAdvanced {
 			long endTime = System.currentTimeMillis();
 			double bitrate = (double) fileSize / (endTime - startTime);
 			
-			System.out.printf("File has been copied with bitrate %f bytes per one millisecond.", bitrate);
+			System.out.printf("File has been copied with bitrate %.2f bytes per one millisecond.", bitrate);
 		} catch (IOException e) {
 			System.out.println("An exception occurred: " + e.getMessage());
 		}

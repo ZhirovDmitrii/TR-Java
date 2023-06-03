@@ -9,7 +9,7 @@ public class MyUtils {
 
 	public static void copyFiles(String sourceFile, String destinationFile, byte[] bytes) throws IOException {
 		try (InputStream in = new FileInputStream(sourceFile);
-				OutputStream out = new FileOutputStream(destinationFile)) {
+				OutputStream out = new FileOutputStream(destinationFile, true)) {
 
 			int buffer;
 			while ((buffer = in.read(bytes)) != -1)
@@ -32,10 +32,8 @@ public class MyUtils {
 
 	public static boolean checkDestinationFile(File destinationFile, String[] args) {
 		if (destinationFile.exists()) { // if true ->
-			if (args.length >= 3 && args[2].equals("overwrite")) { // overwrite
-				if (!destinationFile.delete()) { // if file deletion fails (false -> true)
-					return false;
-				}
+			if (args.length >= 3 && args[2].equalsIgnoreCase("overwrite")) { // overwrite
+				System.out.println("Overwrite destination file");
 			} else {
 				return false; // can't overwrite
 			}
