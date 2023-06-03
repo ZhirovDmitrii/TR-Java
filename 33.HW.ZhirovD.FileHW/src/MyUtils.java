@@ -33,7 +33,7 @@ public class MyUtils {
 
 	public static boolean checkDestinationFile(File destinationFile, String[] args) {
 		if(destinationFile.exists() && (args.length < 3 || !args[2].equalsIgnoreCase("overwrite"))) {
-			System.out.println(args + " can't be overwritten");
+			System.out.println(args[1] + " can't be overwritten");
 			return false;
 		}
 		return true;
