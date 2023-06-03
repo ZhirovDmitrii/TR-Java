@@ -6,15 +6,14 @@ public class Homework {
 	final static String destinationFile = "destinationFile.txt";
 
 	public static void main(String[] args) throws IOException {
-		// check files exist
 		MyUtils.createFileIfNotExist(sourceFile);
 		MyUtils.createFileIfNotExist(destinationFile);
-
-		// add text to file for check
-		MyUtils.addTextToFile(sourceFile, "Checking");
+		
+		File source = new File(sourceFile);
+		File destination = new File(destinationFile);
 		
 		try {
-			MyUtils.copyFiles(sourceFile, destinationFile, arrayBytes);
+			MyUtils.copyFiles(source, destination, arrayBytes);
 			System.out.println("File copy");
 		} catch (Exception e) {
 			e.printStackTrace();
