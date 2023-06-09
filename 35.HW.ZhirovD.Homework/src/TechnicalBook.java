@@ -11,8 +11,6 @@ public class TechnicalBook extends Book implements Serializable{
 		this.technology = technology;
 	}
 
-
-
 	@Override
 	public String toString() {
 		return "TechnicalBook [technology=" + technology + "]" + super.toString();
