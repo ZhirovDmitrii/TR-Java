@@ -6,6 +6,7 @@ public class Person implements Serializable{
 	int id;
 	String name;
 	Address address;
+//	transient LocalDate birthDate; // not serialize
 	LocalDate birthDate;
 	
 	public Person(int id, String name, Address address, LocalDate birthDate) {
