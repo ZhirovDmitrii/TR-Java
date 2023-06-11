@@ -17,10 +17,20 @@ public class LibraryMaps extends AbstractLibrary implements Persistable {
 	HashMap<Long, Book> books;
 	HashMap<Integer, Reader> readers; // readerId, Reader
 	
+	public LibraryMaps() {
+		books = new HashMap<>();
+		readers = new HashMap<>();
+	}
+	
 	@Override
 	public BooksReturnCode addBookItem(Book book) {
-		if (!books.containsKey(book.getIsbn()))
-			return BooksReturnCode.NO_BOOK_ITEM;
+		if(book.getPickPeriod() > getMaxPickPeriod()) {
+			return BooksReturnCode.PICK_PERIOD_GREATER_MAX;
+		}
+		if(book.getPickPeriod() < getMinPickPeriod()) {
+			return BooksReturnCode.PICK_PERIOD_LESS_MIN;
+		}
+		
 		return books.putIfAbsent(book.getIsbn(), book) == null ? BooksReturnCode.OK : BooksReturnCode.BOOK_ITEM_EXISTS;
 	}
 
@@ -33,24 +43,13 @@ public class LibraryMaps extends AbstractLibrary implements Persistable {
 	@Override
 	public BooksReturnCode addBookExemplars(long isbn, int amount) {
 		Book book = books.get(isbn);
-		if (book == null) {
-			books = new HashMap<>();
-		}
+	    if (book == null) {
+	        return BooksReturnCode.NO_BOOK_ITEM;
+	    }
+	    book.setAmount(amount + book.getAmount());
+	    books.putIfAbsent(isbn, book);
 
-		int currentAmountInUse = book.getAmountInUse();
-		int updatedAmountInUse = currentAmountInUse + amount;
-		
-		if(updatedAmountInUse > book.getAmount()) {
-			return BooksReturnCode.NO_BOOK_ITEM;
-		}
-		if (book.getPickPeriod() > getMaxPickPeriod()) {
-	        return BooksReturnCode.PICK_PERIOD_GREATER_MAX;
-	    }
-	    if (book.getPickPeriod() < getMinPickPeriod()) {
-	        return BooksReturnCode.PICK_PERIOD_LESS_MIN;
-	    }
-	    
-		return BooksReturnCode.OK;
+	    return BooksReturnCode.OK;
 	}
 
 	@Override

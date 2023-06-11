@@ -3,8 +3,8 @@ package telran.library.model;
 
 @SuppressWarnings("serial")
 public abstract class AbstractLibrary implements ILibrary{
-	protected int maxPickPeriod;
-	protected int minPickPeriod;
+	protected int maxPickPeriod = 30;
+	protected int minPickPeriod = 3;
 	
 	public AbstractLibrary() {
 		super();
@@ -33,6 +33,5 @@ public abstract class AbstractLibrary implements ILibrary{
 	public void setMinPickPeriod(int minPickPeriod) {
 		this.minPickPeriod = minPickPeriod;
 	}
-	
-	
+
 }
