@@ -43,7 +43,6 @@ public class LibraryMaps extends AbstractLibrary implements Persistable {
 	    }
 	    
 	    book.setAmount(amount + book.getAmount());
-	    books.putIfAbsent(isbn, book);
 
 	    return BooksReturnCode.OK;
 	}
