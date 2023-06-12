@@ -14,13 +14,8 @@ import telran.library.utils.Persistable;
 
 @SuppressWarnings("serial")
 public class LibraryMaps extends AbstractLibrary implements Persistable {
-	HashMap<Long, Book> books;
-	HashMap<Integer, Reader> readers; // readerId, Reader
-	
-	public LibraryMaps() {
-		books = new HashMap<>();
-		readers = new HashMap<>();
-	}
+	HashMap<Long, Book> books = new HashMap<>();
+	HashMap<Integer, Reader> readers = new HashMap<>(); // readerId, Reader
 	
 	@Override
 	public BooksReturnCode addBookItem(Book book) {
@@ -46,6 +41,7 @@ public class LibraryMaps extends AbstractLibrary implements Persistable {
 	    if (book == null) {
 	        return BooksReturnCode.NO_BOOK_ITEM;
 	    }
+	    
 	    book.setAmount(amount + book.getAmount());
 	    books.putIfAbsent(isbn, book);
 
