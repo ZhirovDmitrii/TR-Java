@@ -79,6 +79,6 @@ public class LibraryMaps extends AbstractLibrary implements Persistable {
 	    }
 	    
 	    // if error - return empty library
-	    return (ILibrary) new LibraryMaps();
+	    return new LibraryMaps();
 	}
 }
