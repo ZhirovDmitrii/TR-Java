@@ -24,25 +24,42 @@ public class LibraryMaps extends AbstractLibrary implements Persistable {
 	// Sprint 1
 	HashMap<Long, Book> books = new HashMap<>();
 	HashMap<Integer, Reader> readers = new HashMap<>();
-	
+
 	// Sprint 2
 	TreeMap<LocalDate, List<PickRecord>> records = new TreeMap<>();
 	HashMap<Long, List<PickRecord>> bookRecords = new HashMap<>();
 	HashMap<Integer, List<PickRecord>> readerRecords = new HashMap<>();
 	HashMap<String, List<Book>> authorBooks = new HashMap<>();
 //	===================================================
-	
+
 //	===== Sprint 1 =====
 	@Override
 	public BooksReturnCode addBookItem(Book book) {
-		if(book.getPickPeriod() > getMaxPickPeriod()) {
+		if (book.getPickPeriod() > getMaxPickPeriod()) {
 			return BooksReturnCode.PICK_PERIOD_GREATER_MAX;
 		}
-		if(book.getPickPeriod() < getMinPickPeriod()) {
+		if (book.getPickPeriod() < getMinPickPeriod()) {
 			return BooksReturnCode.PICK_PERIOD_LESS_MIN;
 		}
+
+		boolean res = books.putIfAbsent(book.getIsbn(), book) == null;
+		if (!res) {
+			return BooksReturnCode.BOOK_ITEM_EXISTS;
+		}
+
+		addToAuthorBooks(book);
+
+		return BooksReturnCode.OK;
+	}
+
+	// Sprint 2
+	private void addToAuthorBooks(Book book) {
+		String authorName = book.getAuthor();
 		
-		return books.putIfAbsent(book.getIsbn(), book) == null ? BooksReturnCode.OK : BooksReturnCode.BOOK_ITEM_EXISTS;
+		List<Book> list = authorBooks.getOrDefault(authorName, new ArrayList<>());
+		list.add(book);
+		
+		authorBooks.putIfAbsent(authorName, list);
 	}
 
 	@Override
@@ -54,13 +71,13 @@ public class LibraryMaps extends AbstractLibrary implements Persistable {
 	@Override
 	public BooksReturnCode addBookExemplars(long isbn, int amount) {
 		Book book = books.get(isbn);
-	    if (book == null) {
-	        return BooksReturnCode.NO_BOOK_ITEM;
-	    }
-	    
-	    book.setAmount(amount + book.getAmount());
+		if (book == null) {
+			return BooksReturnCode.NO_BOOK_ITEM;
+		}
 
-	    return BooksReturnCode.OK;
+		book.setAmount(amount + book.getAmount());
+
+		return BooksReturnCode.OK;
 	}
 
 	@Override
@@ -85,48 +102,38 @@ public class LibraryMaps extends AbstractLibrary implements Persistable {
 
 	public static ILibrary restoreFromFile(String fileName) {
 		try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(fileName))) {
-	        return (LibraryMaps) in.readObject();
-	    } catch (FileNotFoundException e) {
-	        System.out.println("File not found: " + fileName);
-	    } catch (IOException e) {
-	        System.out.println("Error reading from file: " + e.getMessage());
-	    } catch (ClassNotFoundException e) {
-	        System.out.println("Error restoring object from file: " + e.getMessage());
-	    }
-	    
-	    // if error - return empty library
-	    return new LibraryMaps();
+			return (LibraryMaps) in.readObject();
+		} catch (FileNotFoundException e) {
+			System.out.println("File not found: " + fileName);
+		} catch (IOException e) {
+			System.out.println("Error reading from file: " + e.getMessage());
+		} catch (ClassNotFoundException e) {
+			System.out.println("Error restoring object from file: " + e.getMessage());
+		}
+
+		// if error - return empty library
+		return new LibraryMaps();
 	}
 
 //	===== Sprint 2 =====
-	
+
 	@Override
 	public BooksReturnCode pickBook(long isbn, int readerId, LocalDate pickDate) {
-		Reader reader = getReader(readerId);
 		Book book = getBook(isbn);
-		
-		if(reader == null) {
-			return BooksReturnCode.NO_READER;
-		}
-		if(book == null || book.getAmount() == 0) {
+
+		if (book.getAmount() == book.getAmountInUse()) {
 			return BooksReturnCode.NO_BOOK_EXEMPLARS;
 		}
-		if(readerReadsBook(readerId, isbn)) {
-			return BooksReturnCode.READER_READS_IT;
+		if (!readers.containsKey(readerId)) {
+			return BooksReturnCode.NO_READER;
 		}
 
 		PickRecord record = new PickRecord(isbn, readerId, pickDate);
 		addToRecordsMap(bookRecords, isbn, record);
 		addToRecordsMap(readerRecords, readerId, record);
 		addToRecordsMap(records, pickDate, record);
-		
+
 		return BooksReturnCode.OK;
-	}
-	
-	
-	private boolean readerReadsBook(int readerId, long isbn) {
-		List<PickRecord> list = readerRecords.getOrDefault(readerId, new ArrayList<>());
-		return list.stream().anyMatch(l -> l.getIsbn() == isbn);
 	}
 
 	@SuppressWarnings("unused")
@@ -151,17 +158,17 @@ public class LibraryMaps extends AbstractLibrary implements Persistable {
 	@Override
 	public List<Book> getBooksAutor(String authorName) {
 		List<Book> list = authorBooks.getOrDefault(authorName, new ArrayList<>());
-		return list.stream().distinct().toList();
+		return list.stream().filter(l -> l.getAmount() > l.getAmountInUse()).toList();
 	}
 
 	@Override
 	public List<PickRecord> getPickRecordsAtDates(LocalDate from, LocalDate to) {
-		if(from.isAfter(to)) {
+		if (from.isAfter(to)) {
 			LocalDate temp = from;
 			from = to;
 			to = temp;
 		}
-		
+
 		Collection<List<PickRecord>> col = records.subMap(from, to).values();
 		return col.stream().flatMap(l -> l.stream()).toList();
 	}

@@ -1,6 +1,5 @@
 package telran.library.model;
 
-
 @SuppressWarnings("serial")
 public abstract class AbstractLibrary implements ILibrary{
 	protected int maxPickPeriod;

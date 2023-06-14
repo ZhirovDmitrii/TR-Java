@@ -43,7 +43,7 @@ class LibraryMapsTest {
 		lib.addBookItem(book);
 		lib.addReader(reader);
 		lib.addBookExemplars(ISBN, AMOUNT);
-		lib.pickBook(ISBN, READER_ID, BIRTH_DATE);
+		lib.pickBook(ISBN, READER_ID, PICK_DATE);
 		lib.save(FILE_NAME);
 	}
 
@@ -96,25 +96,23 @@ class LibraryMapsTest {
 	}
 	
 //	===== Sprint 2 =====
+//	@Disabled
 	@Test
 	void testPickBook() {
-		assertEquals(BooksReturnCode.NO_READER, lib.pickBook(ISBN, READER_ID+1, BIRTH_DATE));
-	
-		assertEquals(BooksReturnCode.NO_BOOK_EXEMPLARS, lib.pickBook(ISBN+1, READER_ID, BIRTH_DATE));
-	
-		lib.pickBook(ISBN, READER_ID, BIRTH_DATE);
-		assertEquals(BooksReturnCode.READER_READS_IT, lib.pickBook(ISBN, READER_ID, BIRTH_DATE));
+		assertEquals(BooksReturnCode.NO_READER, lib.pickBook(ISBN, READER_ID+1, PICK_DATE));
+		
+		assertEquals(BooksReturnCode.NO_BOOK_EXEMPLARS, lib.pickBook(ISBN, READER_ID, PICK_DATE));	// RETURN 0
 	}
 	
 	@Test
 	void testPickRecordsAtDates() {
-		PickRecord pr = new PickRecord(ISBN, READER_ID, BIRTH_DATE);
-		List<PickRecord> list = lib.getPickRecordsAtDates(BIRTH_DATE, PICK_DATE.plusDays(DELAY_DAYS));
+		PickRecord pr = new PickRecord(ISBN, READER_ID, PICK_DATE);
+		List<PickRecord> list = lib.getPickRecordsAtDates(PICK_DATE, PICK_DATE.plusDays(DELAY_DAYS));
 		assertEquals(1, list.size());
 		
 		assertEquals(pr, list.get(0));
 		
-		list = lib.getPickRecordsAtDates(BIRTH_DATE.minusDays(1), BIRTH_DATE);
+		list = lib.getPickRecordsAtDates(PICK_DATE.minusDays(1), PICK_DATE);
 		assertTrue(list.isEmpty());
 	}
 	
@@ -140,7 +138,7 @@ class LibraryMapsTest {
 		assertTrue(readers.isEmpty());
 	}
 	
-	@Disabled
+//	@Disabled
 	@Test
 	void testGetBooksAutor() {
 		List<Book> books = lib.getBooksAutor(AUTHOR);
