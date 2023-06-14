@@ -31,7 +31,6 @@ class LibraryMapsTest {
 	
 	private static final int DELAY_DAYS = 7;
 	private static final LocalDate PICK_DATE = LocalDate.of(2000, 1, 1);
-	private static final LocalDate PICK_DATE1 = LocalDate.of(2000, 1, 10);
 	
 	static Book book = new Book(ISBN, TITLE, AUTHOR, AMOUNT, PICK_PERIOD);
 	static Reader reader = new Reader(READER_ID, NAME, PHONE, BIRTH_DATE);
@@ -107,13 +106,16 @@ class LibraryMapsTest {
 		assertEquals(BooksReturnCode.READER_READS_IT, lib.pickBook(ISBN, READER_ID, BIRTH_DATE));
 	}
 	
-	@Disabled
 	@Test
 	void testPickRecordsAtDates() {
-		PickRecord pr = new PickRecord(ISBN, READER_ID, PICK_DATE);
-		List<PickRecord> list = lib.getPickRecordsAtDates(PICK_DATE, PICK_DATE1);
+		PickRecord pr = new PickRecord(ISBN, READER_ID, BIRTH_DATE);
+		List<PickRecord> list = lib.getPickRecordsAtDates(BIRTH_DATE, PICK_DATE.plusDays(DELAY_DAYS));
+		assertEquals(1, list.size());
 		
-//		assertEquals(1, list.size()); - RETURN 0
+		assertEquals(pr, list.get(0));
+		
+		list = lib.getPickRecordsAtDates(BIRTH_DATE.minusDays(1), BIRTH_DATE);
+		assertTrue(list.isEmpty());
 	}
 	
 	@Test
@@ -147,7 +149,7 @@ class LibraryMapsTest {
 		Book book1 = new Book(ISBN, TITLE, AUTHOR, AMOUNT, PICK_PERIOD);
 		lib.addBookItem(book1);
 		books = lib.getBooksAutor(AUTHOR);
-//		assertEquals(1, books.size()); - RETURN 0
+		assertEquals(1, books.size());	// return 0
 		
 		
 	}

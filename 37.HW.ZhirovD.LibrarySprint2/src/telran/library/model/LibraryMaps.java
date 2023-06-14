@@ -151,7 +151,7 @@ public class LibraryMaps extends AbstractLibrary implements Persistable {
 	@Override
 	public List<Book> getBooksAutor(String authorName) {
 		List<Book> list = authorBooks.getOrDefault(authorName, new ArrayList<>());
-		return list.stream().toList();
+		return list.stream().distinct().toList();
 	}
 
 	@Override
