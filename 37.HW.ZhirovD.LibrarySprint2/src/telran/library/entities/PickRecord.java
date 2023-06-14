@@ -15,13 +15,11 @@ public class PickRecord implements Serializable{
 		// TODO Auto-generated constructor stub
 	}
 
-	public PickRecord(long isbn, int readerId, LocalDate pickDate, LocalDate returnDate, int delayDays) {
+	public PickRecord(long isbn, int readerId, LocalDate pickDate) {
 		super();
 		this.isbn = isbn;
 		this.readerId = readerId;
 		this.pickDate = pickDate;
-		this.returnDate = returnDate;
-		this.delayDays = delayDays;
 	}
 
 	public LocalDate getReturnDate() {
@@ -94,8 +92,8 @@ public class PickRecord implements Serializable{
 
 	@Override
 	public String toString() {
-		return "PickPeriod [isbn=" + isbn + ", readerId=" + readerId + ", pickDate=" + pickDate + ", returnDate="
+		return "PickRecord [isbn=" + isbn + ", readerId=" + readerId + ", pickDate=" + pickDate + ", returnDate="
 				+ returnDate + ", delayDays=" + delayDays + "]";
 	}
-	
+
 }

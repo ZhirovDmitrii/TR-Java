@@ -7,8 +7,11 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 
 import telran.library.entities.Book;
@@ -99,33 +102,68 @@ public class LibraryMaps extends AbstractLibrary implements Persistable {
 	
 	@Override
 	public BooksReturnCode pickBook(long isbn, int readerId, LocalDate pickDate) {
-		// TODO Auto-generated method stub
-		return null;
+		Reader reader = getReader(readerId);
+		Book book = getBook(isbn);
+		
+		if(reader == null) {
+			return BooksReturnCode.NO_READER;
+		}
+		if(book == null || book.getAmount() == 0) {
+			return BooksReturnCode.NO_BOOK_EXEMPLARS;
+		}
+		if(readerReadsBook(readerId, isbn)) {
+			return BooksReturnCode.READER_READS_IT;
+		}
+
+		PickRecord record = new PickRecord(isbn, readerId, pickDate);
+		addToRecordsMap(bookRecords, isbn, record);
+		addToRecordsMap(readerRecords, readerId, record);
+		addToRecordsMap(records, pickDate, record);
+		
+		return BooksReturnCode.OK;
+	}
+	
+	
+	private boolean readerReadsBook(int readerId, long isbn) {
+		List<PickRecord> list = readerRecords.getOrDefault(readerId, new ArrayList<>());
+		return list.stream().anyMatch(l -> l.getIsbn() == isbn);
+	}
+
+	@SuppressWarnings("unused")
+	private <T> void addToRecordsMap(Map<T, List<PickRecord>> recordsMap, T key, PickRecord record) {
+		List<PickRecord> list = recordsMap.getOrDefault(key, new ArrayList<>());
+		list.add(record);
+		recordsMap.put(key, list);
 	}
 
 	@Override
 	public List<Book> getBooksPickedByReader(int readerId) {
-		// TODO Auto-generated method stub
-		return null;
+		List<PickRecord> list = readerRecords.getOrDefault(readerId, new ArrayList<>());
+		return list.stream().map(pr -> getBook(pr.getIsbn())).distinct().toList();
 	}
 
 	@Override
 	public List<Reader> getReadersPickedBook(long isbn) {
-		// TODO Auto-generated method stub
-		return null;
+		List<PickRecord> list = bookRecords.getOrDefault(isbn, new ArrayList<>());
+		return list.stream().map(pr -> getReader(pr.getReaderId())).distinct().toList();
 	}
 
 	@Override
 	public List<Book> getBooksAutor(String authorName) {
-		// TODO Auto-generated method stub
-		return null;
+		List<Book> list = authorBooks.getOrDefault(authorName, new ArrayList<>());
+		return list.stream().toList();
 	}
 
 	@Override
 	public List<PickRecord> getPickRecordsAtDates(LocalDate from, LocalDate to) {
-		// TODO Auto-generated method stub
-		return null;
+		if(from.isAfter(to)) {
+			LocalDate temp = from;
+			from = to;
+			to = temp;
+		}
+		
+		Collection<List<PickRecord>> col = records.subMap(from, to).values();
+		return col.stream().flatMap(l -> l.stream()).toList();
 	}
-	
 
 }
