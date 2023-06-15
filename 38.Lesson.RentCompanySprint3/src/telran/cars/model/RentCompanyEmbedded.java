@@ -15,6 +15,7 @@ import telran.cars.dto.Car;
 import telran.cars.dto.CarsReturnCode;
 import telran.cars.dto.Driver;
 import telran.cars.dto.Model;
+import telran.cars.dto.RemovedCarData;
 import telran.cars.dto.RentRecord;
 import telran.cars.utils.Persistable;
 
@@ -194,6 +195,68 @@ public class RentCompanyEmbedded extends AbstractRentCompany implements Persista
 		// all lists need convert to 1 list with dates
 		Collection<List<RentRecord>> col = records.subMap(fromDate, toDate).values();
 		return col.stream().flatMap(l -> l.stream()).toList(); // collection {}{}{}{}{} -> {}
+	}
+
+//	===== Sprint 3 =====
+	
+	@Override
+	public RemovedCarData removeCar(String regNumber) {
+		Car car = getCar(regNumber);
+		if(car == null) {
+			return null;
+		}
+		car.setFlRemoved(true);	// flag - if i want remove car this flag just for information
+		return car.inUse() ? new RemovedCarData(car, null) : actualCarRemove(car);
+	}
+
+	private RemovedCarData actualCarRemove(Car car) {
+		String regNumber = car.getRegNumber();
+		
+		//delete all information from archive
+		List<RentRecord> list = carRecords.get(regNumber);
+		carRecords.remove(regNumber);	// delete from all maps
+		
+		// and delete car
+		cars.remove(regNumber);
+		
+		removeFromDriverRecords(list);
+		removeFromRecords(list);
+		removeFromModelCars(car);
+		
+		return new RemovedCarData(car, list);
+	}
+
+	private void removeFromModelCars(Car car) {
+		modelCars.get(car.getModelName()).remove(car);
+	}
+
+	private void removeFromRecords(List<RentRecord> list) {
+		list.forEach(rr -> records.get(rr.getRentDate()).remove(rr));
+	}
+
+	private void removeFromDriverRecords(List<RentRecord> list) {
+		list.forEach(rr -> driverRecords.get(rr.getLicenseId()).remove(rr));	// all records by driver who get this removedCar
+		// list -> rr{id=1, regN = 1}, rr{id=2, regN=1}, rr{id=3, regN=1}
+		// {id=1, car=5}, {id=1, car=1}, {id=1, car=20} 
+		// remove -> {id=1, car=5}, {id=1, car=20} 
+	}
+
+	@Override
+	public List<RemovedCarData> removeCarsOfModel(String modelName) {
+		List<Car> list = modelCars.get(modelName);
+		if(list != null) {
+//			models.remove(modelName);
+			return list.stream().map(c -> removeCar(c.getRegNumber())).toList();
+		}
+		
+		return new ArrayList<>();
+	}
+
+	@Override
+	public RemovedCarData returnCar(String regNumber, long licenseId, LocalDate returnDate, int damages,
+			int tankPercent) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }
