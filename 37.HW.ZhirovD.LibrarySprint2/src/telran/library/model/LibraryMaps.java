@@ -43,22 +43,25 @@ public class LibraryMaps extends AbstractLibrary implements Persistable {
 		}
 
 		boolean res = books.putIfAbsent(book.getIsbn(), book) == null;
-		if (!res) {
-			return BooksReturnCode.BOOK_ITEM_EXISTS;
+		if (res) {
+//			addToAuthorBook(authorBooks, book.getAuthor(), book);
 		}
+		return BooksReturnCode.BOOK_ITEM_EXISTS;
 
-		addToAuthorBooks(book);
-
-		return BooksReturnCode.OK;
 	}
+
+//	private void addToAuthorBook(HashMap<K, List<V>> map, K key, V value) {
+//		map.
+//
+//	}
 
 	// Sprint 2
 	private void addToAuthorBooks(Book book) {
 		String authorName = book.getAuthor();
-		
+
 		List<Book> list = authorBooks.getOrDefault(authorName, new ArrayList<>());
 		list.add(book);
-		
+
 		authorBooks.putIfAbsent(authorName, list);
 	}
 
@@ -120,7 +123,9 @@ public class LibraryMaps extends AbstractLibrary implements Persistable {
 	@Override
 	public BooksReturnCode pickBook(long isbn, int readerId, LocalDate pickDate) {
 		Book book = getBook(isbn);
-
+		if (book == null) {
+			return BooksReturnCode.NO_BOOK_ITEM;
+		}
 		if (book.getAmount() == book.getAmountInUse()) {
 			return BooksReturnCode.NO_BOOK_EXEMPLARS;
 		}
@@ -128,11 +133,19 @@ public class LibraryMaps extends AbstractLibrary implements Persistable {
 			return BooksReturnCode.NO_READER;
 		}
 
+		List<PickRecord> pickRecords = readerRecords.get(readerId);
+		if (pickRecords != null
+				&& pickRecords.stream().anyMatch(r -> r.getIsbn() == isbn && r.getReturnDate() == null)) {
+			return BooksReturnCode.READER_READS_IT;
+		}
+
 		PickRecord record = new PickRecord(isbn, readerId, pickDate);
 		addToRecordsMap(bookRecords, isbn, record);
 		addToRecordsMap(readerRecords, readerId, record);
 		addToRecordsMap(records, pickDate, record);
 
+		book.setAmountInUse(book.getAmountInUse() + 1);
+		
 		return BooksReturnCode.OK;
 	}
 
