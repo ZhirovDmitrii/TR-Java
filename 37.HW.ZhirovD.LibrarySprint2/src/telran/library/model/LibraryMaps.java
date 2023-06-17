@@ -42,27 +42,14 @@ public class LibraryMaps extends AbstractLibrary implements Persistable {
 			return BooksReturnCode.PICK_PERIOD_LESS_MIN;
 		}
 
-		boolean res = books.putIfAbsent(book.getIsbn(), book) == null;
-		if (res) {
-//			addToAuthorBook(authorBooks, book.getAuthor(), book);
+		// Sprint 2
+		BooksReturnCode res = books.putIfAbsent(book.getIsbn(), book) == null ? BooksReturnCode.OK
+				: BooksReturnCode.BOOK_ITEM_EXISTS;
+		if (res == BooksReturnCode.OK) {
+			addToMap(authorBooks, book.getAuthor(), book);
 		}
-		return BooksReturnCode.BOOK_ITEM_EXISTS;
 
-	}
-
-//	private void addToAuthorBook(HashMap<K, List<V>> map, K key, V value) {
-//		map.
-//
-//	}
-
-	// Sprint 2
-	private void addToAuthorBooks(Book book) {
-		String authorName = book.getAuthor();
-
-		List<Book> list = authorBooks.getOrDefault(authorName, new ArrayList<>());
-		list.add(book);
-
-		authorBooks.putIfAbsent(authorName, list);
+		return res;
 	}
 
 	@Override
@@ -123,7 +110,7 @@ public class LibraryMaps extends AbstractLibrary implements Persistable {
 	@Override
 	public BooksReturnCode pickBook(long isbn, int readerId, LocalDate pickDate) {
 		Book book = getBook(isbn);
-		if (book == null) {
+		if (book == null || book.getAmount() < 0) {
 			return BooksReturnCode.NO_BOOK_ITEM;
 		}
 		if (book.getAmount() == book.getAmountInUse()) {
@@ -140,20 +127,17 @@ public class LibraryMaps extends AbstractLibrary implements Persistable {
 		}
 
 		PickRecord record = new PickRecord(isbn, readerId, pickDate);
-		addToRecordsMap(bookRecords, isbn, record);
-		addToRecordsMap(readerRecords, readerId, record);
-		addToRecordsMap(records, pickDate, record);
+		addToMap(bookRecords, record.getIsbn(), record);
+		addToMap(readerRecords, record.getReaderId(), record);
+		addToMap(records, record.getPickDate(), record);
 
 		book.setAmountInUse(book.getAmountInUse() + 1);
-		
+
 		return BooksReturnCode.OK;
 	}
-
-	@SuppressWarnings("unused")
-	private <T> void addToRecordsMap(Map<T, List<PickRecord>> recordsMap, T key, PickRecord record) {
-		List<PickRecord> list = recordsMap.getOrDefault(key, new ArrayList<>());
-		list.add(record);
-		recordsMap.put(key, list);
+	
+	private <K, V> void addToMap(Map<K, List<V>> map, K key, V value) {
+		map.computeIfAbsent(key, k -> new ArrayList<>()).add(value);
 	}
 
 	@Override
@@ -183,7 +167,7 @@ public class LibraryMaps extends AbstractLibrary implements Persistable {
 		}
 
 		Collection<List<PickRecord>> col = records.subMap(from, to).values();
-		return col.stream().flatMap(l -> l.stream()).toList();
+		return col == null ? new ArrayList<>() : col.stream().flatMap(List::stream).toList();
 	}
 
 }
