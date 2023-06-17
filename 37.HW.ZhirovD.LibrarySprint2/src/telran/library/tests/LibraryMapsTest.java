@@ -55,7 +55,7 @@ class LibraryMapsTest {
 	@BeforeEach
 	void setUp() throws Exception
 	{
-		lib = LibraryMaps.restoreFromFile("test.book");
+		lib = LibraryMaps.restoreFromFile("library.txt");
 	}
 
 //	Sprint 1
