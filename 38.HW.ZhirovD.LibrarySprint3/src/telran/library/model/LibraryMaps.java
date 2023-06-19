@@ -183,86 +183,80 @@ public class LibraryMaps extends AbstractLibrary implements Persistable {
 	@Override
 	public RemovedBookData removeBook(long isbn) {
 		Book book = getBook(isbn);
-		if(book == null) {
+		if(book == null || book.getAmount() < 0) {
 			return null;
 		}
-		
-		if(!bookRecords.containsKey(isbn)) {
-			book.setAmountInUse(-1) ;
+
+		if(book.getAmountInUse() > 0)
+		{
+			book.setAmount(-1);
 			return new RemovedBookData(book, null);
 		}
-
-		return actualBookRemove(book);
+		else {
+			List<PickRecord> removRecords = actualBookRemove(isbn);
+			return new RemovedBookData(book, removRecords);
+		}
+	}
+	
+	private void removeRecordsFromMaps(PickRecord record) {
+		long isbn = record.getIsbn();
+		bookRecords.remove(isbn);
+		
+		LocalDate pickDate = record.getPickDate();
+		records.get(pickDate).remove(record);
+		
+		int readerId = record.getReaderId();
+		readerRecords.get(readerId);
 	}
 
-	private RemovedBookData actualBookRemove(Book book) {
-		long isbn = book.getIsbn();
+	private RemovedBookData actualBookRemove(long isbn) {
+		List<PickRecord> recordsForRemove = bookRecords.getOrDefault(isbn, new ArrayList<>());
+		recordsForRemove.forEach(this::removeRecordsFromMaps);
 		
-		// delete all information from archive
-		List<PickRecord> list = bookRecords.get(isbn);
-		bookRecords.remove(isbn);	// delete all information about book from this map
-		books.remove(isbn);	// delete all book by isbn
-		
-		removeFromReaderRecords(list);
-		removeFromRecords(list);
-		removeFromAuthorBooks(book);
-		
-		return new RemovedBookData(book, list);
-	}
-
-	private void removeFromAuthorBooks(Book book) {
+		Book book = getBook(isbn);
 		authorBooks.get(book.getAuthor()).remove(book);
-	}
-
-	private void removeFromRecords(List<PickRecord> list) {
-		list.forEach(rr -> records.get(rr.getPickDate()).remove(rr));
-	}
-
-	private void removeFromReaderRecords(List<PickRecord> list) {
-		list.forEach(rr -> readerRecords.get(rr.getReaderId()).remove(rr));
+		books.remove(isbn);
+		return recordsForRemove;
 	}
 
 	@Override
 	public List<RemovedBookData> removeAuthor(String author) {
-		List<Book> list = authorBooks.get(author);
-		if(list != null) {
-			return list.stream().map(b -> removeBook(b.getIsbn())).toList();
-		}
-		return new ArrayList<>();
+		List<Book> list = authorBooks.getOrDefault(author, new ArrayList<>());
+		List<RemovedBookData> res = new ArrayList<>();
+		list.forEach(b -> res.add(removeBook(b.getIsbn())));
+		return res;
 	}
 
 	@Override
 	public RemovedBookData returnBook(long isbn, int readerId, LocalDate returnDate) {
-		PickRecord record = readerRecords.get(readerId).stream()
-				.filter(pr -> pr.getIsbn() == isbn 
-						&& pr.getPickDate() == null) // don't return from use
-				.findFirst().orElse(null);
+		List<PickRecord> recordsList = readerRecords.get(readerId);
+		if(recordsList == null) {
+			return null;
+		}
 		
-		// if reader don't get a book, OR get, but returned
+		PickRecord record = recordsList.stream().filter(r -> r.getIsbn() == isbn && r.getReturnDate() == null).findFirst().orElse(null);
 		if(record == null) {
 			return null;
 		}
 		
-		// calculate the delay in days
-		getDelay(record);
-		
-		// overwrite return date
-		record.setReturnDate(returnDate);
-		
-		// update information about book
 		Book book = getBook(isbn);
-		book.setAmountInUse(book.getAmountInUse() - 1);
-		
-		List<PickRecord> list = new ArrayList<>();
-		list.add(record);
-		
-		return new RemovedBookData(book, list);
-	}
-	
-	private int getDelay(PickRecord record) {
-		int realDays = (int) ChronoUnit.DAYS.between(record.getPickDate(), record.getReturnDate());
-		record.setDelayDays(realDays);
-		return record.getDelayDays();
+		updateRecord(returnDate, record, book);
+		return updateBook(isbn, book);
 	}
 
+	private void updateRecord(LocalDate returnDate, PickRecord record, Book book) {
+		record.setReturnDate(returnDate);
+		int actualDays = (int) ChronoUnit.DAYS.between(returnDate, returnDate)
+		
+	}
+
+	private RemovedBookData updateBook(long isbn, Book book) {
+		book.setAmountInUse(book.getAmountInUse() - 1);
+		if(book.getAmount() < 0 && book.getAmountInUse() == 0)
+			return new RemovedBookData(book, actualBookRemove(isbn));
+		else
+			return new RemovedBookData(book, null);
+	}
+	
+	
 }
