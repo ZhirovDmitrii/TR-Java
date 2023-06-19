@@ -246,7 +246,7 @@ public class LibraryMaps extends AbstractLibrary implements Persistable {
 
 	private void updateRecord(LocalDate returnDate, PickRecord record, Book book) {
 		record.setReturnDate(returnDate);
-		int actualDays = (int) ChronoUnit.DAYS.between(returnDate, returnDate)
+		int actualDays = (int) ChronoUnit.DAYS.between(returnDate, returnDate);
 		
 	}
 

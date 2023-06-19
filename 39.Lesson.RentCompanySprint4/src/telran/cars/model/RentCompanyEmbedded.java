@@ -8,9 +8,12 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import telran.cars.dto.Car;
 import telran.cars.dto.CarsReturnCode;
@@ -314,4 +317,63 @@ public class RentCompanyEmbedded extends AbstractRentCompany implements Persista
 		String modelName = cars.get(regNumber).getModelName();
 		return models.get(modelName).getPriceDay();
 	}
+
+//	===== Sprint 4 =====
+	
+	@Override
+	public List<String> getMostPopularCarMOdels(LocalDate fromDate, LocalDate toDate, int fromAge, int toAge) {
+		List<RentRecord> list = getRentRecordsAtDates(fromDate, toDate);
+		
+		Map<String, Long> map = list.stream().filter(rr -> isProperAge(rr, fromAge, toAge))
+				.collect(Collectors.groupingBy(rr -> getCar(rr.getRegNumber()).getModelName(), //key
+						Collectors.counting())); // value
+		
+		long max = Collections.max(map.values()); // get max
+		
+		List<String> models = new ArrayList<>();
+		map.forEach((k, v) -> {
+			if(v == max)
+				models.add(k);
+		});
+		
+		return models;
+	}
+
+	private boolean isProperAge(RentRecord rr, int fromAge, int toAge) {
+		LocalDate rentDate = rr.getRentDate();	// get rent date
+		int birthDate = getDriver(rr.getLicenseId()).getBirthYear(); // get birth date driver
+		
+		int age = rentDate.getYear() - birthDate;
+		return age >= fromAge && age < toAge;
+	}
+
+	@Override
+	public List<String> getMostProfitableCarModels(LocalDate fromDate, LocalDate toDate) {
+		List<RentRecord> list = getRentRecordsAtDates(fromDate, toDate);
+		if(list.isEmpty()) {
+			return new ArrayList<String>();
+		}
+		
+		Map<String, Double> map = list.stream()
+				.collect(Collectors.groupingBy(rr -> getCar(rr.getRegNumber()).getModelName(),
+						Collectors.summingDouble(RentRecord::getCost)));
+											// Object -> primitive
+		double max = map.values().stream().mapToDouble(c -> c).max().getAsDouble();
+		
+		List<String> res = new ArrayList<>();
+		map.forEach((k,v) ->{
+			if(v == max) {
+				res.add(k);
+			}
+		});
+		
+		return res;
+	}
+
+	@Override
+	public List<Driver> getMostActiveDriver() {
+		
+		return null;
+	}
+
 }
