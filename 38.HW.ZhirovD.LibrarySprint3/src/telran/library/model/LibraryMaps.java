@@ -206,10 +206,10 @@ public class LibraryMaps extends AbstractLibrary implements Persistable {
 		records.get(pickDate).remove(record);
 		
 		int readerId = record.getReaderId();
-		readerRecords.get(readerId);
+		readerRecords.get(readerId).remove(record);
 	}
 
-	private RemovedBookData actualBookRemove(long isbn) {
+	private List<PickRecord> actualBookRemove(long isbn) {
 		List<PickRecord> recordsForRemove = bookRecords.getOrDefault(isbn, new ArrayList<>());
 		recordsForRemove.forEach(this::removeRecordsFromMaps);
 		
@@ -246,7 +246,12 @@ public class LibraryMaps extends AbstractLibrary implements Persistable {
 
 	private void updateRecord(LocalDate returnDate, PickRecord record, Book book) {
 		record.setReturnDate(returnDate);
-		int actualDays = (int) ChronoUnit.DAYS.between(returnDate, returnDate);
+		int actualDays = (int) ChronoUnit.DAYS.between(record.getPickDate(), returnDate);
+		int delay = actualDays - book.getPickPeriod();
+		
+		if(delay > 0) {
+			record.setDelayDays(delay);
+		}
 		
 	}
 
