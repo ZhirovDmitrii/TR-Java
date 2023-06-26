@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
 
-import telran.library.dto.RemovedBookData;
 import telran.library.entities.*;
 
 
@@ -29,4 +28,10 @@ public interface ILibrary extends Serializable{
 	List<RemovedBookData> removeAuthor(String author);
 	RemovedBookData returnBook(long isbn, int readerId, LocalDate returnDate);
 	
+	// Sprint 4 functions
+	List<ReaderDelay> getReadersDelayingBooks(LocalDate currentDate);
+	List<ReaderDelay> getReadersDelayedBooks();
+	List<Book> getMostPopularBooks(LocalDate fromDate, LocalDate toDate, int fromAge, int toAge);
+	List<String> getMostPopularAuthors();
+	List<Reader> getMostActiveReaders(LocalDate fromDate, LocalDate toDate);
 }

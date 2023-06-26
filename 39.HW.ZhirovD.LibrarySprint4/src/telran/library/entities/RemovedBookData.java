@@ -1,9 +1,6 @@
-package telran.library.dto;
+package telran.library.entities;
 
 import java.util.List;
-
-import telran.library.entities.Book;
-import telran.library.entities.PickRecord;
 
 public class RemovedBookData {
 	private Book book;

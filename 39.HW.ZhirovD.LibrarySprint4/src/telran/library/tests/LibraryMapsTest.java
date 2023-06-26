@@ -9,7 +9,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import telran.library.dto.RemovedBookData;
 import telran.library.entities.Book;
 import telran.library.entities.PickRecord;
 import telran.library.entities.Reader;
