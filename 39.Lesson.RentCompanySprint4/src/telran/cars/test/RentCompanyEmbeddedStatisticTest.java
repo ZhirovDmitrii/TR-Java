@@ -1,6 +1,5 @@
 package telran.cars.test;
 
-
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -25,7 +24,7 @@ class RentCompanyEmbeddedStatisticTest {
 	LocalDate fromDate = LocalDate.of(1900, 1, 1);
 	LocalDate toDate = LocalDate.of(2500, 1, 1);
 	LocalDate rentDate = LocalDate.of(2020, 1, 1);
-	
+
 	int rentDays = 5;
 
 	@BeforeEach
@@ -39,12 +38,12 @@ class RentCompanyEmbeddedStatisticTest {
 
 	private void rentsReturns() {
 		int[] licinses = { 0, 0, 1, 1, 2, 2, 3, 3, 0 }; // number drivers
-		String[] regNumbers = {"car0", "car1", "car0", "car1", "car2", "car3", "car2", "car3", "car4"};
+		String[] regNumbers = { "car0", "car1", "car0", "car1", "car2", "car3", "car2", "car3", "car4" };
 
-		for(int i = 0; i < licinses.length; i++) { // rehNumbers can use too
+		for (int i = 0; i < licinses.length; i++) { // rehNumbers can use too
 			company.rentCar(regNumbers[i], licinses[i], rentDate, rentDays);
 			company.returnCar(regNumbers[i], licinses[i], rentDate.plusDays(rentDays), 0, 100);
-			rentDate = rentDate.plusDays(rentDays+1);
+			rentDate = rentDate.plusDays(rentDays + 1);
 		}
 	}
 
@@ -70,16 +69,16 @@ class RentCompanyEmbeddedStatisticTest {
 	void testGetMostPopularCarMOdels() {
 		int ageYoungFrom = rentDate.getYear() - birthYears[0];
 		int ageYoungTo = rentDate.getYear() - birthYears[1] + 1;
-		
+
 		int ageOldFrom = rentDate.getYear() - birthYears[2];
 		int ageOldTo = rentDate.getYear() - birthYears[3] + 1;
-		
-		List<String> res = company.getMostPopularCarMOdels(fromDate, toDate, ageYoungFrom, ageYoungTo);
+
+		List<String> res = company.getMostPopularCarModels(fromDate, toDate, ageYoungFrom, ageYoungTo);
 		assertEquals(2, res.size());
 		assertTrue(res.contains("model0"));
 		assertTrue(res.contains("model1"));
-		
-		res = company.getMostPopularCarMOdels(fromDate, toDate, ageOldFrom, ageOldTo);
+
+		res = company.getMostPopularCarModels(fromDate, toDate, ageOldFrom, ageOldTo);
 		assertEquals(2, res.size());
 		assertTrue(res.contains("model2"));
 		assertTrue(res.contains("model3"));
