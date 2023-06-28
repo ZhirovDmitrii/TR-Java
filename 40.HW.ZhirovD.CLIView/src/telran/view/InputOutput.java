@@ -1,14 +1,20 @@
 package telran.view;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.function.Function;
 
 public interface InputOutput {
 //	===== abstract methods =====
+	
 	String inputString(String prompt);	// will take a string
 	void output(Object obj);	// will send information
 	
+	
 //	===== default methods =====
+	
 	// take object and get String
 	default void outputLine(Object obj){
 		output(obj.toString());
@@ -36,14 +42,14 @@ public interface InputOutput {
 		}
 	}
 	
-	// check our String
+	// check that the input number is an integer
 	default Integer inputInteger(String prompt) {
 		return inputObject(prompt, "It's not integer number", s ->
 		{
 			try {
 				Integer res = Integer.parseInt(s);
 				return res;
-			} catch (Exception e) {
+			} catch (NumberFormatException e) {
 				return null;
 			}
 		});
@@ -63,10 +69,45 @@ public interface InputOutput {
 		});
 	}
 	
-	// check operator
+	// check operators -+*/
 	default String inputString(String prompt, List<String> options) {
 		return inputObject(prompt, "String is not in option", s -> options.contains(s) ? s : null);
 	}
 	
-	// HW - write another methods
+//	===== HOMEWORK =====
+	
+	// check that the input number is a double
+	default Double inputDouble(String prompt) {
+		return inputObject(prompt, "It's not double number", s -> {
+			try {
+				Double res = Double.parseDouble(s);
+				return res;
+			} catch (NumberFormatException e) {
+				return null;
+			}
+		});
+	}
+	
+	// check that the input number is a long
+	default Long inputLong(String prompt) {
+		return inputObject(prompt, "It's not long number", s ->{
+			try {
+				Long res = Long.parseLong(s);
+				return res;
+			} catch (NumberFormatException e) {
+				return null;
+			}
+		});
+	}
+	
+	default LocalDate inputDate(String prompt, String format) {
+		return inputObject(prompt, "It's not date", s -> {
+			try {
+				DateTimeFormatter dtf = DateTimeFormatter.ofPattern(format);
+				return LocalDate.parse(s,dtf);
+			} catch (DateTimeParseException e) {
+				return null;
+			}
+		});
+	}
 }

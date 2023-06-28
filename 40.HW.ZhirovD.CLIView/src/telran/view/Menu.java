@@ -10,6 +10,7 @@ public class Menu {
 		this.inOut = inOut;
 	}
 	
+	// check the correctness of the input fields in the menu
 	public void runMenu() {
 		while(true) {
 			for(int i = 0; i < items.length; i++) {
@@ -23,6 +24,8 @@ public class Menu {
 			items[select-1].perform();
 			if(items[select-1].isExit())
 				return;
+			
+			System.out.println();	// new line after iteration completes
 		}
 	}
 	

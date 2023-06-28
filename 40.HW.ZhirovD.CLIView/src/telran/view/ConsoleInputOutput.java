@@ -12,7 +12,7 @@ public class ConsoleInputOutput implements InputOutput{
 		
 		String text = scanner.nextLine();	// for read from console
 		
-		return text.equalsIgnoreCase("cansel") ? null : text;
+		return text.equalsIgnoreCase("cancel") ? null : text;
 	}
 
 	@Override
