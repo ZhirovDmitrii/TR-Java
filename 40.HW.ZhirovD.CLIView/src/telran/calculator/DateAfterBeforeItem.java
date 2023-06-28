@@ -25,7 +25,6 @@ public class DateAfterBeforeItem implements Item {
 		return "Date after or before item";
 	}
 
-	@SuppressWarnings("unlikely-arg-type")
 	@Override
 	public void perform() {
 		LocalDate date = inOut.inputDate("Enter date in format " + format, format);
@@ -40,6 +39,6 @@ public class DateAfterBeforeItem implements Item {
 		if (beforeAfter == null)
 			return;
 		
-		inOut.outputLine(list.equals("before") ? date.plusDays(days) : date.minusDays(days));
+		inOut.outputLine(list.contains("before") ? date.minusDays(days) : date.plusDays(days).toString());
 	}
 }
