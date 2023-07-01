@@ -1,8 +1,6 @@
 package telran.calculator;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 import telran.view.InputOutput;
 import telran.view.Item;
@@ -10,14 +8,11 @@ import telran.view.Item;
 public class DateAfterBeforeItem implements Item {
 	InputOutput inOut;
 	String format;
-	List<String> list = new ArrayList<>();
 
 	public DateAfterBeforeItem(InputOutput inOut, String format) {
 		super();
 		this.inOut = inOut;
 		this.format = format;
-		this.list.add("before");
-		this.list.add("after");
 	}
 
 	@Override
@@ -35,7 +30,7 @@ public class DateAfterBeforeItem implements Item {
 		if (days == null)
 			return;
 
-		String beforeAfter = inOut.inputString("Enter 'before' or 'after' days", list);
+		String beforeAfter = inOut.inputString("Enter 'before' or 'after' days");
 		if (beforeAfter == null)
 			return;
 		
