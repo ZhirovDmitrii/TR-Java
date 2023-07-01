@@ -39,6 +39,6 @@ public class DateAfterBeforeItem implements Item {
 		if (beforeAfter == null)
 			return;
 		
-		inOut.outputLine(list.contains("before") ? date.minusDays(days) : date.plusDays(days).toString());
+		inOut.outputLine(beforeAfter.contains("before") ? date.minusDays(days) : date.plusDays(days).toString());
 	}
 }
