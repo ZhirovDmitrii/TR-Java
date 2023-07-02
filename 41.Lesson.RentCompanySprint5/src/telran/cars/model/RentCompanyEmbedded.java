@@ -147,6 +147,7 @@ public class RentCompanyEmbedded extends AbstractRentCompany implements Persista
 	private void addToRecord(RentRecord record) {
 		LocalDate date = record.getRentDate();
 		List<RentRecord> list = records.getOrDefault(date, new ArrayList<>());
+		
 		list.add(record);
 
 		records.putIfAbsent(date, list);
@@ -155,6 +156,7 @@ public class RentCompanyEmbedded extends AbstractRentCompany implements Persista
 	private void addToDriverRecords(RentRecord record) {
 		long licenseId = record.getLicenseId();
 		List<RentRecord> list = driverRecords.getOrDefault(licenseId, new ArrayList<>());
+		
 		list.add(record);
 
 		driverRecords.putIfAbsent(licenseId, list);
@@ -163,27 +165,30 @@ public class RentCompanyEmbedded extends AbstractRentCompany implements Persista
 	private void addToCarRecords(RentRecord record) {
 		String regNumber = record.getRegNumber();
 		List<RentRecord> list = carRecords.getOrDefault(regNumber, new ArrayList<>());
+		
 		list.add(record);
 
 		carRecords.putIfAbsent(regNumber, list);
-
 	}
 
 	@Override
 	public List<Car> getCarsByDriver(long licenseId) {
 		List<RentRecord> list = driverRecords.getOrDefault(licenseId, new ArrayList<>());
+		
 		return list.stream().map(rr -> getCar(rr.getRegNumber())).distinct().toList();
 	}
 
 	@Override
 	public List<Driver> getDriversByCar(String regNumber) {
 		List<RentRecord> list = carRecords.getOrDefault(regNumber, new ArrayList<>());
+		
 		return list.stream().map(rr -> getDriver(rr.getLicenseId())).distinct().toList();
 	}
 
 	@Override
 	public List<Car> getCarsByModel(String modelName) {
 		List<Car> list = modelCars.getOrDefault(modelName, new ArrayList<>());
+		
 		return list.stream().filter(c -> !c.inUse() && !c.isFlRemoved()).toList();
 	}
 
@@ -200,6 +205,7 @@ public class RentCompanyEmbedded extends AbstractRentCompany implements Persista
 		}
 		
 		Collection<List<RentRecord>> col = records.subMap(fromDate, toDate).values();
+		
 		return col.stream().flatMap(l -> l.stream()).toList(); // collection {}{}{}{}{} -> {}
 	}
 
@@ -210,18 +216,23 @@ public class RentCompanyEmbedded extends AbstractRentCompany implements Persista
 		Car car = getCar(regNumber);
 		if (car == null)
 			return null;
+		
 		car.setFlRemoved(true);
+		
 		return car.inUse() ? new RemovedCarData(car, null) : actualCarRemove(car);
 	}
 
 	private RemovedCarData actualCarRemove(Car car) {
 		String regNumber = car.getRegNumber();
 		List<RentRecord> list = carRecords.get(regNumber);
+		
 		cars.remove(regNumber);
 		carRecords.remove(regNumber);
+		
 		removeFromDriverRecords(list);
 		removeFromRecords(list);
 		removeFromModelCars(car);
+		
 		return new RemovedCarData(car, list);
 	}
 
@@ -243,6 +254,7 @@ public class RentCompanyEmbedded extends AbstractRentCompany implements Persista
 		if (list != null) {
 			return list.stream().map(c -> removeCar(c.getRegNumber())).toList();
 		}
+		
 		return new ArrayList<>();
 	}
 
@@ -252,16 +264,21 @@ public class RentCompanyEmbedded extends AbstractRentCompany implements Persista
 		RentRecord record = driverRecords.get(licenseId).stream()
 				.filter(rr -> rr.getRegNumber().equals(regNumber) && rr.getReturnDate() == null).findFirst()
 				.orElse(null);
+		
 		if (record == null)
 			return null;
+		
 		updateRecord(record, returnDate, damages, tankPercent);
+		
 		Car car = getCar(regNumber);
 		updateCar(car, damages);
+		
 		return car.isFlRemoved() || damages > REMOVE_THRESHOLD ? actualCarRemove(car) : new RemovedCarData(car, null);
 	}
 
 	private void updateCar(Car car, int damages) {
 		car.setUse(false);
+		
 		if (damages >= BAD_THRESHOLD)
 			car.setState(State.BAD);
 		else if (damages >= GOOD_THRESHOLD)
@@ -272,6 +289,7 @@ public class RentCompanyEmbedded extends AbstractRentCompany implements Persista
 		record.setDamages(damages);
 		record.setReturnDate(returnDate);
 		record.setTankPercent(tankPercent);
+		
 		double cost = computeCost(getRentPrice(record.getRegNumber()), record.getRentDays(), getDelay(record),
 				tankPercent, getTankVolume(record.getRegNumber()));
 		record.setCost(cost);
@@ -279,12 +297,14 @@ public class RentCompanyEmbedded extends AbstractRentCompany implements Persista
 
 	private int getTankVolume(String regNumber) {
 		String modelName = cars.get(regNumber).getModelName();
+		
 		return models.get(modelName).getGasTank();
 	}
 
 	private int getDelay(RentRecord record) {
 		long realDays = ChronoUnit.DAYS.between(record.getRentDate(), record.getReturnDate());
 		int delta = (int) (realDays - record.getRentDays());
+		
 		return delta < 0 ? 0 : delta;
 	}
 
@@ -292,6 +312,7 @@ public class RentCompanyEmbedded extends AbstractRentCompany implements Persista
 
 	private int getRentPrice(String regNumber) {
 		String modelName = cars.get(regNumber).getModelName();
+		
 		return models.get(modelName).getPriceDay();
 	}
 
@@ -327,8 +348,8 @@ public class RentCompanyEmbedded extends AbstractRentCompany implements Persista
 	private boolean isProperAge(RentRecord rr, int fromAge, int toAge) {
 		LocalDate rentDate = rr.getRentDate(); // get rent date
 		int birthDate = getDriver(rr.getLicenseId()).getBirthYear(); // get birth date driver
-
 		int age = rentDate.getYear() - birthDate;
+		
 		return age >= fromAge && age < toAge;
 	}
 
@@ -357,7 +378,9 @@ public class RentCompanyEmbedded extends AbstractRentCompany implements Persista
 	@Override
 	public List<Driver> getMostActiveDriver() {
 		long max = driverRecords.values().stream().mapToLong(c -> c.size()).max().getAsLong();
+		
 		List<Driver> res = new ArrayList<>();
+		
 		driverRecords.forEach((k, v) -> {
 			if (v.size() == max) {
 				res.add(getDriver(k));
