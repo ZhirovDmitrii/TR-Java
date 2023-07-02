@@ -15,7 +15,7 @@ public class GetMostProfitableModelsItem extends RentCompanyItem{
 
 	@Override
 	public String displayedName() {
-		return "Get most profitableModelsItem";
+		return "Get most profitable models";
 	}
 
 	@Override
