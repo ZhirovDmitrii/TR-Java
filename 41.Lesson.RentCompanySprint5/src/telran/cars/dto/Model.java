@@ -11,7 +11,6 @@ public class Model implements Serializable{
 	private int priceDay;
 	
 	public Model() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public Model(String modelName, int gasTank, String company, String country, int priceDay) {
