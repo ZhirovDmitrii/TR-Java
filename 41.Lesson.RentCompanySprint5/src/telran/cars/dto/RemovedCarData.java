@@ -9,7 +9,6 @@ public class RemovedCarData implements Serializable{
 	private List<RentRecord> removedRecords;
 	
 	public RemovedCarData() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public RemovedCarData(Car car, List<RentRecord> removedRecords) {
