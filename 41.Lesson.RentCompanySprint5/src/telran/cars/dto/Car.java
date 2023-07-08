@@ -19,7 +19,6 @@ public class Car implements Serializable{
 	}
 	
 	public Car() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public State getState() {
