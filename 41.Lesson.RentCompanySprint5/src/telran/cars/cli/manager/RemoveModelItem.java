@@ -25,7 +25,7 @@ public class RemoveModelItem extends RentCompanyItem{
 		if(modelName == null)
 			return;
 		
-		company.removeCarsOfModel(modelName);
+		company.removeCarsOfModel(modelName).forEach(inOut::outputLine);
 	}
 
 }
