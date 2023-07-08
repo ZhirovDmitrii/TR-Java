@@ -15,7 +15,6 @@ public class RentRecord implements Serializable{
 	private double cost;
 	
 	public RentRecord() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public RentRecord(String regNumber, long licenseId, LocalDate rentDate, int rentDays) {
