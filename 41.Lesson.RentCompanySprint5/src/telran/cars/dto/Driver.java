@@ -18,7 +18,6 @@ public class Driver implements Serializable{
 	}
 	
 	public Driver() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public String getPhone() {
