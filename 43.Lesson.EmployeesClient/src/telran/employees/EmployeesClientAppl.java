@@ -3,7 +3,6 @@ package telran.employees;
 import telran.employees.service.EmployeesTcpProxy;
 import telran.employees.service.IEmployees;
 import telran.view.ConsoleInputOutput;
-import telran.view.ExitItem;
 import telran.view.InputOutput;
 import telran.view.Item;
 import telran.view.Menu;
