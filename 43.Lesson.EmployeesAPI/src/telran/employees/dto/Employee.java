@@ -10,7 +10,6 @@ public class Employee implements Serializable{
 	int salary;
 	
 	public Employee() {
-		// TODO Auto-generated constructor stub
 	}
 	
 	public Employee(int id, String name, String companyName, int salary) {

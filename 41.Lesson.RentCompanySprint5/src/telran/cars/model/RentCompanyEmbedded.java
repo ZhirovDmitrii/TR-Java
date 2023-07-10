@@ -198,11 +198,6 @@ public class RentCompanyEmbedded extends AbstractRentCompany implements Persista
 		// 2.1.2000 -> {rr1}
 		// 5.1.2000 -> {rr1, rr2}
 		// all lists need convert to 1 list with dates
-		if(fromDate.isAfter(toDate)) {
-			LocalDate tmp = fromDate;
-			fromDate = toDate;
-			toDate = tmp;
-		}
 		
 		Collection<List<RentRecord>> col = records.subMap(fromDate, toDate).values();
 		
@@ -320,17 +315,10 @@ public class RentCompanyEmbedded extends AbstractRentCompany implements Persista
 
 	@Override
 	public List<String> getMostPopularCarModels(LocalDate fromDate, LocalDate toDate, int fromAge, int toAge) {
-		if(fromAge > toAge) {
-			int tmp = fromAge;
-			fromAge = toAge;
-			toAge = tmp;
-		}
-		final int ageFrom = fromAge;
-		final int ageTo = toAge;
 		
 		List<RentRecord> list = getRentRecordsAtDates(fromDate, toDate);
 
-		Map<String, Long> map = list.stream().filter(rr -> isProperAge(rr, ageFrom, ageTo))
+		Map<String, Long> map = list.stream().filter(rr -> isProperAge(rr, fromAge, toAge))
 				.collect(Collectors.groupingBy(rr -> getCar(rr.getRegNumber()).getModelName(), // key
 						Collectors.counting())); // value
 

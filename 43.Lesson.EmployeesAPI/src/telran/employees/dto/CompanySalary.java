@@ -8,7 +8,6 @@ public class CompanySalary implements Serializable{
 	double avgSalary;
 	
 	public CompanySalary() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public CompanySalary(String companyName, double avgSalary) {
