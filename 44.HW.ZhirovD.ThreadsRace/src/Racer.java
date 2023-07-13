@@ -18,7 +18,6 @@ public class Racer implements Runnable {
 		this.winner = winner;
 	}
 
-
 	@Override
 	public void run() {
 		for (int i = 0; i < nRuns; i++) {
